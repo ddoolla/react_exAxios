@@ -87,6 +87,56 @@ axios({
 
 <br/>
 
+### \* 요청 메서드 명령어
+
+- 명령어 메서드 사용시 'url', 'method', 'data' 속성을 config에서 지정할 필요 X
+
+```
+axios.request(config)
+axios.get(url[, confug])
+axios.post(url[, data[, config]])
+axios.put(url[, data[, config]])
+axios.patch(url[, data[, config]])
+axios.delete(url[, config])
+
+// 서버로부터 응답 헤더만 가져옴 (본문 포함 X)
+axios.head(url[, config])
+
+// 서버에서 지원하는 HTTP 메서드 확인 등
+axios.options(url[, config])
+
+-------------------------------------------------------------------------------------
+ex)
+    // GET
+    axios.get('/api/users').then( ... );
+
+    // POST
+    let newUser = { ... };
+    axios.post('/api/users', newUser);
+```
+
+<br/>
+
+---
+
+> ## Axios 인스턴스 생성
+
+```
+const instance = axios.create({
+    baseURL: 'http://api.example.com/api',
+    timeout: 1000,
+    ...
+});
+
+instance.get('/users', {
+    headers: { ... } // 인스턴스 config 와 결합
+});
+```
+
+#### [※ 인스턴스 메서드](https://axios-http.com/kr/docs/instance)
+
+<br/>
+
 ---
 
 > ## 요청 Config
@@ -138,6 +188,9 @@ axios({
         name: 'Lee'
     },
 
+    // 요청이 설정된 timeout 보다 오래걸리면 요청 중단
+    timeout: 0, // default
+
     // 응답 데이터 타입
     // 옵션: arraybuffer, document, json, text, stream
     // 브라우저 전용: blob
@@ -183,3 +236,107 @@ axios({
 ---
 
 > ## Config 기본 값 설정
+
+### \* 모든 요청에 적용
+
+```
+axios.defaults.baseURL = 'http://api.example.com';
+
+// 모든 HTTP 메서드 공통 적용
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+
+// POST 메서드만 적용
+axios.defaults..headers.post['Content-type'] = 'application/x-www-form-urlencoded';
+```
+
+<br/>
+
+### \* 커스텀 인스턴스 기본 값 설정
+
+```
+const instance = axios.create({
+    baseURL: 'https://api.example.com' // 요청 config
+});
+
+instance.defaults.headers.comon['Authorization'] = AUTH_TOKEN;
+```
+
+<br/>
+
+### \* Config 우선 순위
+
+### axios.defaults < instance.defaults < 요청 config
+
+<br/>
+
+---
+
+> ## 인터셉터
+
+- 요청과 응답이 처리되기 전에 가로채어 작업 수행
+
+```
+// 요청 인터셉터 추가
+axios.intercepters.request.use(function (config) {
+    // 요청이 전달도기 전에 작업 수행
+    ...
+    return config;
+}, function (error) {
+    // 요청 오류가 있는 작업 수행
+    ...
+    return Promise.reject(error);
+});
+
+// 응답 인터셉터 추가가
+axios.intercepters.response.use(function (response) {
+    // 응답 데이터가 있는 작업 수행 (상태 코드: 2xx)
+    ...
+    return response;
+}, function (error) {
+    // 응답 오류가 있는 작업 수행 (상태 코드: 2xx 외)
+    ...
+    return Promise.reject(error);
+});
+
+// 인터셉터 제거
+const myInterceptor = axios.intercepters.request.use(function () { ... });
+axios.intercepters.request.eject(myInterceptor);
+```
+
+#### ※ axios 인스턴스도 위와 같이 추가 및 제거 가능
+
+<br/>
+
+---
+
+> ## 에러 핸들링
+
+```
+axios.get('/users')
+    .catch(function (error) {
+        if (error.response) {
+            // 요청이 전송되었는데 2xx 외의 상태코드 응답
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+
+        } else if (error.request) {
+            // 요청은 전송되었는데 응답 수신 X
+            console.log(error.request);
+
+        } else {
+            // 요청 전송 X (요청 설정 문제)
+            console.log(error.message);
+        }
+        console.log(error.config);
+
+        // HTTP 에러에 대한 더 많은 정보를 객체 형식으로 가져옴
+        console.log(error.toJSON);
+    });
+```
+
+<br/>
+
+---
+
+> ## 요청 취소
