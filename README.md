@@ -1,6 +1,6 @@
 # Axois API
 
-[참조] [Axios Docs](https://axios-http.com/kr/docs/intro)
+[참조] [Axios Docs](https://axios-http.com/docs/intro)
 
 > ## Axois 란?
 
@@ -133,7 +133,7 @@ instance.get('/users', {
 });
 ```
 
-#### [※ 인스턴스 메서드](https://axios-http.com/kr/docs/instance)
+#### [※ 인스턴스 메서드](https://axios-http.com/docs/instance)
 
 <br/>
 
@@ -200,7 +200,7 @@ instance.get('/users', {
 }
 ```
 
-#### [※ 추가로 필요한 설정은 찾아보기 : AXIOS - 요청 Config](https://axios-http.com/kr/docs/req_config)
+#### [※ 추가로 필요한 설정은 찾아보기 : AXIOS - 요청 Config](https://axios-http.com/docs/req_config)
 
 <br/>
 
