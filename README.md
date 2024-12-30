@@ -340,3 +340,54 @@ axios.get('/users')
 ---
 
 > ## 요청 취소
+
+### \* timeout
+
+- axios 호출시 timeout 속성을 설정하면 시간 내에 응답을 받지 못하면 요청 중단 처리
+
+<br/>
+
+### \* signal (AbortController)
+
+- axios 호출은 경우에 따라 연결을 일찍 취소하여 불필요한 대기를 방지할 수 있다.  
+  예를 들어 네트워크가 연결이 불가능해졌을 때 취소하지 않으면 axios 호출이 부모 코드나 스택에서 타임아웃될 때까지 대기 상태로 유지될 수 있다.
+
+```
+// 방법 1. AbortController.abort() 호출
+const controller = new AbortController();
+
+axios.get('/users', {
+    signal: controller.signal;
+}).then(function (response) {
+    ...
+});
+
+controller.abort(); // 요청 취소
+
+// 방법 2. AbortSignal.timeout() [nodejs 17.3+]
+axios.get('/users', {
+    signal: AbortSignal.timeout(5000); // 5초 뒤 요청 취소
+}).then(function (response) {
+    ...
+});
+
+// 방법 3. 도우미 함수 정의
+function newAbortSignal(timeoutMs) {
+    const abortController = new AbortController();
+    setTimeout(() => abortController.abort(), timeoutMs || 0);
+
+    return abortController.signal;
+}
+
+axios.get('/users', {
+    signal: newAbortSignal(5000);
+}).then(function (response) {
+    ...
+});
+```
+
+#### ※ Axios 에서 제공하는 CancelToken 은 더 이상 사용되지 않음 (deprecated)
+
+<br/>
+
+---

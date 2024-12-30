@@ -8,6 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
+        // '/api' 로 시작하는 모든 경로
         target: "http://localhost:8080", // API 서버 주소
         changeOrigin: true, // Origin 헤더 변경
         secure: false, // https: true, http: false
