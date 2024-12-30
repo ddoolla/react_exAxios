@@ -200,7 +200,7 @@ instance.get('/users', {
 }
 ```
 
-#### [※ AXIOS - 요청 Config](https://axios-http.com/kr/docs/req_config)
+#### [※ 추가로 필요한 설정은 찾아보기 : AXIOS - 요청 Config](https://axios-http.com/kr/docs/req_config)
 
 <br/>
 
@@ -387,6 +387,96 @@ axios.get('/users', {
 ```
 
 #### ※ Axios 에서 제공하는 CancelToken 은 더 이상 사용되지 않음 (deprecated)
+
+<br/>
+
+---
+
+> ## Multipart Bodies
+
+### \* FormData API를 사용한 multipart/form-data 타입 데이터 포스팅
+
+```
+const form = new FormData();
+form.append('my_field', 'my value');
+form.append('my_buffer', new Blob([1, 2, 3]));
+form.append('my_file', fileInput.files[0]);
+
+axios.post('http://example.com', form);
+
+// 위와 같은 의미
+axios.postForm('http://example.com', {
+    my_field: 'my value',
+    my_buffer: new Blob([1, 2, 3]),
+    my_file: fileInput.files
+});
+```
+
+<br/>
+
+### \* FormData 객체 자동 직렬화
+
+- v0.27.0 부터 요청의 Content-Type 헤더가 multipart/form-data 로 설정된 경우  
+  요청 데이터를 FormData 객체로 자동 직렬화 지원
+
+```
+axios.post('http://example.com', {
+    user: {
+        name: 'Lee'
+    },
+    file: fs.createReadStream('image.jpg')
+}, {
+    headers: {
+        'Content-Type': 'multipart/form-data'
+    }
+}).then( ... );
+```
+
+#### \* { } - JSON.stringify 로 값을 직렬화
+
+#### \* [ ] - 동일한 키를 가진 별도의 필드로 배열과 같은 객체를 풀어준다 (unwrap)
+
+<br/>
+
+### \* 자동 직렬화 예시
+
+```
+const obj = {
+    x: 1,
+    arr: [1, 2, 3],
+    arr2: [1, [2], 3],
+    users: [{name: 'Lee', gender: 'MALE'}, {name: 'Kim', gender: 'FEMALE'}],
+    'obj2{}': [{x: 1}]
+};
+
+// Axios 직렬화기에 의해 내부적으로 실행
+const formData = new FormData();
+formData.append('x', 1);
+formData.append('arr[]', '1');
+formData.append('arr[]', '2');
+formData.append('arr[]', '3');
+formData.append('arr2[0]', '1');
+formData.append('arr2[1][0]', '2');
+formData.append('arr2[2]', '3');
+formData.append('users[0][name]', 'Lee');
+formData.append('users[0][gender]', 'MALE');
+formData.append('users[1][name]', 'Kim');
+formData.append('users[1][gender]', 'FEMALE');
+formData.append('obj2{}', '[{"x": 1}]');
+```
+
+<br/>
+
+### \* 단축 메서드 (postFrom, putForm, patchForm)
+
+- content-type 헤더가 multipart/form-data 으로 미리 설정된 http 메서드
+
+```
+// FileList 객체를 직접 전달 가능
+await axios.postForm(
+    '/http:example.com/post',
+    document.querySelector('#fileInput').files); // 모든 파일은 'files[]' 필드 이름으로 전송
+```
 
 <br/>
 
