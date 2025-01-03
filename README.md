@@ -1,7 +1,5 @@
 # Axois API
 
-[참조] [Axios Docs](https://axios-http.com/docs/intro)
-
 > ## Axois 란?
 
 - 브라우저와 node.js 에서 사용할 수 있는 Promise 기반 HTTP 클라이언트 라이브러리
@@ -482,3 +480,5 @@ await axios.postForm(
 <br/>
 
 ---
+
+#### [참조] [Axios Docs](https://axios-http.com/docs/intro)
